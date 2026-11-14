@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FUNBET · Апгрейдер</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            user-select: none;
+        }
+
+        :root {
+            --bg-primary: #07070c;
+            --bg-secondary: #0e0e16;
+            --bg-card: rgba(18, 18, 30, 0.7);
+            --bg-glass: rgba(20, 20, 35, 0.55);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(59, 130, 246, 0.4);
+            --accent-blue: #3b82f6;
+            --accent-blue-bright: #60a5fa;
+            --accent-purple: #8b5cf6;
+            --accent-gold: #fbbf24;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        }
+
+        body {
+            background: radial-gradient(ellipse at 20% 0%, #1a1a3a 0%, #0a0a12 50%, #050508 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 40px;
+            background: rgba(10, 10, 18, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            height: 48px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
+            transition: filter 0.3s ease;
+        }
+
+        .logo:hover {
+            filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.8));
+        }
+
+        .balance-display {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-weight: 800;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                0 8px 32px rgba(59, 130, 246, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .balance-display:hover {
+            transform: translateY(-50%) scale(1.03);
+        }
+
+        .coin-icon-css {
+            width: 16px;
+            height: 16px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px rgba(251, 191, 36, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .coin-small {
+            width: 10px;
+            height: 10px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+            vertical-align: middle;
+            box-shadow: 0 0 4px rgba(251, 191, 36, 0.6);
+        }
+
+        .sub-text {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 20px auto 0;
+            padding: 0 20px;
+            max-width: 700px;
+            line-height: 1.6;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sub-text strong {
+            color: var(--accent-blue-bright);
+            font-weight: 700;
+        }
+
+        .main-upgrader {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 30px;
+            padding: 30px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .side-panel {
+            background: var(--bg-glass);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 24px;
+            width: 340px;
+            min-height: 320px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .side-panel:hover {
+            border-color: rgba(59, 130, 246, 0.25);
+            box-shadow: var(--shadow-lg), 0 0 40px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .panel-tabs {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            display: flex;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 14px;
+            padding: 4px;
+            border: 1px solid var(--border-subtle);
+            gap: 4px;
+        }
+
+        .panel-tabs div {
+            flex: 1;
+            text-align: center;
+            padding: 9px 0;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .panel-tabs div:hover:not(.active) {
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .panel-tabs div.active {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 30px;
+            flex: 1;
+        }
+
+        .item-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            transition: transform 0.3s ease;
+            width: 100%;
+        }
+
+        .item-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .item-card img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 30px rgba(59, 130, 246, 0.15));
+            transition: filter 0.3s ease;
+        }
+
+        .item-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-align: center;
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .item-price {
+            font-size: 14px;
+            color: var(--accent-gold);
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(251, 191, 36, 0.1);
+            padding: 6px 16px;
+            border-radius: 100px;
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.1);
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            padding: 0 4px;
+            overflow-y: auto;
+            max-height: 220px;
+        }
+
+        .shop-grid::-webkit-scrollbar { width: 4px; }
+        .shop-grid::-webkit-scrollbar-thumb { background: var(--accent-blue); border-radius: 4px; }
+        .shop-grid::-webkit-scrollbar-track { background: transparent; }
+
+        .shop-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 10px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shop-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .shop-item:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+            background: rgba(59, 130, 246, 0.08);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .shop-item:hover::before { opacity: 1; }
+
+        .shop-item .shop-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(30, 30, 50, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-subtle);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .shop-item .shop-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 4px;
+        }
+
+        .shop-item .shop-name {
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 1;
+            line-height: 1.2;
+            word-wrap: break-word;
+            width: 100%;
+        }
+
+        .shop-item .shop-price {
+            font-size: 11px;
+            color: var(--accent-gold);
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .center-circle {
+            position: relative;
+            width: 360px;
+            height: 360px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .circle-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #1a1a2e, #0a0a12);
+            box-shadow: 
+                inset 0 0 60px rgba(0, 0, 0, 0.9),
+                inset 0 0 20px rgba(59, 130, 246, 0.1),
+                0 0 60px rgba(59, 130, 246, 0.15),
+                0 20px 60px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .circle-bg::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, transparent 0%, rgba(59, 130, 246, 0.3) 25%, transparent 50%, rgba(139, 92, 246, 0.3) 75%, transparent 100%);
+            z-index: -1;
+            animation: rotate-glow 8s linear infinite;
+            filter: blur(2px);
+        }
+
+        @keyframes rotate-glow {
+            to { transform: rotate(360deg); }
+        }
+
+        svg.ring-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+        }
+
+        .ring-track {
+            fill: none;
+            stroke: rgba(30, 30, 50, 0.9);
+            stroke-width: 22;
+        }
+
+        .ring-success {
+            fill: none;
+            stroke: url(#successGradient);
+            stroke-width: 22;
+            stroke-dasharray: 930;
+            stroke-dashoffset: 930;
+            transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.6));
+        }
+
+        .ring-fail {
+            fill: none;
+            stroke: url(#failGradient);
+            stroke-width: 22;
+            stroke-dasharray: 930;
+            stroke-dashoffset: 930;
+            filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6));
+        }
+
+        .arrow-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            transition: transform 3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 10;
+            will-change: transform;
+        }
+
+        .arrow-img {
+            position: absolute;
+            top: -32px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 66px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.8)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+        }
+
+        .center-text {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .chance-value {
+            font-size: 62px;
+            font-weight: 900;
+            color: var(--text-primary);
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(59, 130, 246, 0.5), 0 0 60px rgba(59, 130, 246, 0.2);
+            letter-spacing: -2px;
+            background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .chance-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-top: 6px;
+            font-weight: 800;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            margin-top: 10px;
+            position: relative;
+            z-index: 1;
+            padding-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            transition: all 0.25s ease;
+        }
+
+        .icon-btn:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue-bright);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .main-action-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1e40af 100%);
+            color: white;
+            font-size: 18px;
+            font-weight: 900;
+            padding: 18px 80px;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 10px 40px rgba(37, 99, 235, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .main-action-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .main-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2), 0 15px 50px rgba(37, 99, 235, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .main-action-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .main-action-btn:disabled {
+            background: linear-gradient(135deg, #1e1e2e, #15151f);
+            color: var(--text-muted);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .main-action-btn:disabled::before {
+            display: none;
+        }
+
+        .quick-bets {
+            display: flex;
+            gap: 6px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            padding: 6px;
+            border-radius: 14px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .quick-bets button {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .quick-bets button:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue-bright);
+        }
+
+        .bottom-inventory {
+            display: flex;
+            gap: 24px;
+            padding: 24px 40px;
+            background: rgba(10, 10, 18, 0.7);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-subtle);
+            margin-top: auto;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .inv-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .inv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .inv-header h3 {
+            font-size: 14px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .inv-header h3 span {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 6px;
+            color: var(--accent-blue-bright);
+            font-size: 12px;
+        }
+
+        .inv-header > span {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .inv-grid {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            padding-top: 6px;
+        }
+
+        .inv-grid::-webkit-scrollbar { height: 6px; }
+        .inv-grid::-webkit-scrollbar-thumb { background: var(--accent-blue); border-radius: 4px; }
+        .inv-grid::-webkit-scrollbar-track { background: transparent; }
+
+        .inv-item {
+            background: rgba(20, 20, 35, 0.7);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            min-width: 140px;
+            max-width: 140px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .inv-item:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            background: rgba(59, 130, 246, 0.06);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .inv-item.selected {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.12);
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3), 0 0 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .inv-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+            transition: transform 0.25s ease;
+        }
+
+        .inv-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .inv-name {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-align: center;
+            font-weight: 600;
+            line-height: 1.3;
+            word-wrap: break-word;
+            width: 100%;
+        }
+
+        .inv-price {
+            color: var(--accent-gold);
+            font-weight: 800;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .inv-chance {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 100px;
+            box-shadow: 0 0 0 2px rgba(10, 10, 18, 0.8), 0 0 12px rgba(59, 130, 246, 0.6);
+            letter-spacing: 0.3px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-150px);
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 14px;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 20px 50px rgba(239, 68, 68, 0.5);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1000;
+            pointer-events: none;
+            letter-spacing: 0.3px;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .toast.success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 20px 50px rgba(34, 197, 94, 0.5);
+        }
+
+        @media (max-width: 1100px) {
+            .main-upgrader {
+                flex-direction: column;
+                align-items: center;
+            }
+            .side-panel {
+                width: 100%;
+                max-width: 380px;
+            }
+            .center-circle {
+                width: 320px;
+                height: 320px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .top-nav {
+                padding: 16px 20px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .balance-display {
+                position: static;
+                transform: none;
+                margin-left: auto;
+                font-size: 15px;
+                padding: 8px 18px;
+            }
+            .center-circle {
+                width: 280px;
+                height: 280px;
+            }
+            .chance-value {
+                font-size: 48px;
+            }
+            .main-action-btn {
+                padding: 16px 50px;
+                font-size: 16px;
+            }
+            .bottom-inventory {
+                padding: 20px;
+            }
+            .side-panel {
+                min-height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <img class="logo" src="https://raw.githubusercontent.com/saintezz/FUNBET/main/FB.png" alt="FUNBET Logo">
+        <div class="balance-display">
+            <span class="coin-icon-css"></span> <span id="balanceAmount">1000</span>
+        </div>
+    </div>
+    <div class="sub-text">
+        Выбери предмет из инвентаря и <strong>цель подороже</strong> — при удаче предмет станет ей. При неудаче ставка сгорает.
+    </div>
+
+    <div class="main-upgrader">
+        <div class="side-panel">
+            <div class="panel-tabs">
+                <div class="active" id="tabInventory">Инвентарь</div>
+                <div id="tabShop">Магазин</div>
+            </div>
+
+            <div class="tab-content" id="contentInventory">
+                <div class="item-card">
+                    <div id="selectedItemContainer">
+                        <img id="selectedItemImg" src="https://raw.githubusercontent.com/forerer-afk/brainroterX/main/garama.png" alt="Selected Item">
+                    </div>
+                    <div class="item-name" id="selectedItemName">Garama and Madundung</div>
+                    <div class="item-price"><span class="coin-small"></span> <span id="selectedItemPrice">41</span></div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="contentShop" style="display: none;">
+                <div class="shop-grid" id="shopGrid"></div>
+            </div>
+        </div>
+
+        <div class="center-circle">
+            <div class="circle-bg"></div>
+            <svg class="ring-svg" viewBox="0 0 360 360">
+                <defs>
+                    <linearGradient id="successGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#22c55e" />
+                        <stop offset="100%" stop-color="#16a34a" />
+                    </linearGradient>
+                    <linearGradient id="failGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ef4444" />
+                        <stop offset="100%" stop-color="#dc2626" />
+                    </linearGradient>
+                </defs>
+                <circle class="ring-track" cx="180" cy="180" r="148" />
+                <circle id="ringSuccess" class="ring-success" cx="180" cy="180" r="148" stroke-dasharray="930" stroke-dashoffset="930" />
+                <circle id="ringFail" class="ring-fail" cx="180" cy="180" r="148" stroke-dasharray="930" stroke-dashoffset="930" />
+            </svg>
+
+            <div class="arrow-container" id="arrowContainer">
+                <img class="arrow-img" src="https://raw.githubusercontent.com/saintezz/FUNBET/main/strelka.png" alt="arrow">
+            </div>
+
+            <div class="center-text">
+                <div class="chance-value" id="chanceValue">58%</div>
+                <div class="chance-label">шанс</div>
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <div class="panel-tabs">
+                <div class="active" style="cursor: default; background: transparent; color: var(--text-muted); box-shadow: none;">ЦЕЛЬ</div>
+            </div>
+            <div class="item-card" style="margin-top: 30px;">
+                <div id="targetItemContainer">
+                    <img id="targetItemImg" src="https://raw.githubusercontent.com/forerer-afk/brainroterX/main/burguru.png" alt="Target Item">
+                </div>
+                <div class="item-name" id="targetItemName">Burguro and Fryuro</div>
+                <div class="item-price"><span class="coin-small"></span> <span id="targetItemPrice">70</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="action-buttons">
+            <button class="icon-btn" title="Авто">A</button>
+            <button class="icon-btn" title="Защита">Z</button>
+            <button class="icon-btn" title="Настройки">S</button>
+        </div>
+        <button class="main-action-btn" id="upgradeBtn">ПРОКАЧАТЬ</button>
+        <div class="quick-bets">
+            <button>x1.5</button>
+            <button>x2</button>
+            <button>x5</button>
+            <button>x10</button>
+            <button>30%</button>
+            <button>50%</button>
+            <button>75%</button>
+        </div>
+    </div>
+
+    <div class="bottom-inventory">
+        <div class="inv-section">
+            <div class="inv-header">
+                <h3><span>INV</span> Мой инвентарь</h3>
+                <span id="invCount">Всего: 0 предметов</span>
+            </div>
+            <div class="inv-grid" id="inventoryGrid"></div>
+        </div>
+        <div class="inv-section">
+            <div class="inv-header">
+                <h3><span>UPG</span> Прокачать до</h3>
+            </div>
+            <div class="inv-grid" id="targetsGrid"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Сообщение</div>
+
+    <script>
+        const ALL_BRAINROTS = {
+            garama: {
+                id: 'garama',
+                name: 'Garama and Madundung',
+                price: 41,
+                img: 'https://raw.githubusercontent.com/forerer-afk/brainroterX/main/garama.png'
+            },
+            burguru: {
+                id: 'burguru',
+                name: 'Burguro and Fryuro',
+                price: 70,
+                img: 'https://raw.githubusercontent.com/forerer-afk/brainroterX/main/burguru.png'
+            },
+            cerberus: {
+                id: 'cerberus',
+                name: 'Cerberus',
+                price: 170,
+                img: 'https://raw.githubusercontent.com/forerer-afk/brainroterX/main/cerberus.png'
+            },
+            rubiko: {
+                id: 'rubiko',
+                name: 'Rubiko and Kubiko',
+                price: 192,
+                img: 'https://raw.githubusercontent.com/forerer-afk/brainroterX/main/Rubiko_and_Kubiko.webp'
+            },
+            dragon: {
+                id: 'dragon',
+                name: 'Dragon Cannelloni',
+                price: 976,
+                img: 'https://raw.githubusercontent.com/forerer-afk/brainroterX/main/dragoncannelloni.png'
+            }
+        };
+
+        let inventory = [
+            { id: 'garama', quantity: 1 },
+            { id: 'burguru', quantity: 1 }
+        ];
+
+        let coins = 1000;
+        let selectedItemId = 'garama';
+        let selectedTargetId = 'burguru';
+        let isSpinning = false;
+
+        const balanceAmount = document.getElementById('balanceAmount');
+        const selectedItemContainer = document.getElementById('selectedItemContainer');
+        const selectedItemName = document.getElementById('selectedItemName');
+        const selectedItemPrice = document.getElementById('selectedItemPrice');
+        const targetItemContainer = document.getElementById('targetItemContainer');
+        const targetItemName = document.getElementById('targetItemName');
+        const targetItemPrice = document.getElementById('targetItemPrice');
+        const upgradeBtn = document.getElementById('upgradeBtn');
+        const arrowContainer = document.getElementById('arrowContainer');
+        const chanceValueEl = document.getElementById('chanceValue');
+        const toastEl = document.getElementById('toast');
+        const inventoryGrid = document.getElementById('inventoryGrid');
+        const targetsGrid = document.getElementById('targetsGrid');
+        const shopGrid = document.getElementById('shopGrid');
+        const invCount = document.getElementById('invCount');
+
+        const ringSuccess = document.getElementById('ringSuccess');
+        const ringFail = document.getElementById('ringFail');
+        const CIRCUMFERENCE = 930;
+
+        const tabInventory = document.getElementById('tabInventory');
+        const tabShop = document.getElementById('tabShop');
+        const contentInventory = document.getElementById('contentInventory');
+        const contentShop = document.getElementById('contentShop');
+
+        tabInventory.addEventListener('click', () => {
+            tabInventory.classList.add('active');
+            tabShop.classList.remove('active');
+            contentInventory.style.display = 'flex';
+            contentShop.style.display = 'none';
+        });
+
+        tabShop.addEventListener('click', () => {
+            tabShop.classList.add('active');
+            tabInventory.classList.remove('active');
+            contentInventory.style.display = 'none';
+            contentShop.style.display = 'flex';
+        });
+
+        function createAvatar(brainrot, size = 90) {
+            return `<img src="${brainrot.img}" style="width:${size}px;height:${size}px;object-fit:contain;" alt="${brainrot.name}">`;
+        }
+
+        // Динамический расчет адекватного шанса на основе соотношения цен
+        function calculateChance(currentId, targetId) {
+            const current = ALL_BRAINROTS[currentId];
+            const target = ALL_BRAINROTS[targetId];
+            if (!current || !target) return 0;
+            
+            // Формула: (цена текущего / цена цели) * 100
+            // Для Garama (41) на Burguro (70) = (41 / 70) * 100 = 58.57% -> 58%
+            let chance = Math.floor((current.price / target.price) * 100);
+            
+            if (chance >= 100) return 99; // Кап на 99%
+            if (chance <= 0) return 1;    // Минимум 1%
+            return chance;
+        }
+
+        function updateBalanceUI() {
+            balanceAmount.textContent = coins;
+        }
+
+        function resetArrow() {
+            arrowContainer.style.transition = 'none';
+            arrowContainer.style.transform = 'rotate(0deg)';
+        }
+
+        function showToast(message, isSuccess = false) {
+            toastEl.textContent = message;
+            toastEl.className = 'toast show';
+            if (isSuccess) toastEl.classList.add('success');
+            else toastEl.classList.remove('success');
+            setTimeout(() => toastEl.classList.remove('show'), 3000);
+        }
+
+        function renderInventory() {
+            inventoryGrid.innerHTML = '';
+            invCount.textContent = `Всего: ${inventory.length} предметов`;
+
+            inventory.forEach(item => {
+                const brainrot = ALL_BRAINROTS[item.id];
+                if (!brainrot) return;
+
+                const el = document.createElement('div');
+                el.className = `inv-item ${selectedItemId === item.id ? 'selected' : ''}`;
+                el.dataset.id = item.id;
+                el.innerHTML = `
+                    ${createAvatar(brainrot, 60)}
+                    <span class="inv-name">${brainrot.name}</span>
+                    <span class="inv-price"><span class="coin-small"></span>${brainrot.price}</span>
+                `;
+
+                el.addEventListener('click', () => {
+                    if (isSpinning || selectedItemId === item.id) return;
+                    selectedItemId = item.id;
+                    
+                    // Автоматически выбираем следующую доступную цель
+                    const available = Object.values(ALL_BRAINROTS).filter(b => 
+                        b.id !== selectedItemId && b.price > brainrot.price
+                    );
+                    if (available.length > 0) {
+                        selectedTargetId = available[0].id;
+                    }
+                    
+                    updateSelectedItemUI();
+                    renderInventory();
+                    renderTargets();
+                    resetArrow();
+                });
+
+                inventoryGrid.appendChild(el);
+            });
+
+            if (inventory.length === 0) {
+                inventoryGrid.innerHTML = '<div style="color: #475569; font-size: 12px; padding: 10px;">Инвентарь пуст</div>';
+            }
+        }
+
+        function renderTargets() {
+            targetsGrid.innerHTML = '';
+            const currentItem = ALL_BRAINROTS[selectedItemId];
+            if (!currentItem) return;
+
+            Object.values(ALL_BRAINROTS).forEach(brainrot => {
+                if (brainrot.id === selectedItemId) return;
+                if (brainrot.price <= currentItem.price) return;
+
+                const chance = calculateChance(selectedItemId, brainrot.id);
+                const el = document.createElement('div');
+                el.className = `inv-item ${selectedTargetId === brainrot.id ? 'selected' : ''}`;
+                el.dataset.id = brainrot.id;
+                el.innerHTML = `
+                    ${createAvatar(brainrot, 60)}
+                    <span class="inv-name">${brainrot.name}</span>
+                    <span class="inv-price"><span class="coin-small"></span>${brainrot.price}</span>
+                    <div class="inv-chance">${chance}%</div>
+                `;
+
+                el.addEventListener('click', () => {
+                    if (isSpinning) return;
+                    if (selectedTargetId === brainrot.id) return;
+                    selectedTargetId = brainrot.id;
+                    updateTargetUI();
+                    renderTargets();
+                    updateChanceRing(chance);
+                });
+
+                targetsGrid.appendChild(el);
+            });
+
+            if (targetsGrid.children.length === 0) {
+                targetsGrid.innerHTML = '<div style="color: #475569; font-size: 12px; padding: 10px;">Нет доступных целей</div>';
+            }
+        }
+
+        function renderShop() {
+            shopGrid.innerHTML = '';
+            Object.values(ALL_BRAINROTS).forEach(brainrot => {
+                const hasItem = inventory.some(i => i.id === brainrot.id);
+                const el = document.createElement('div');
+                el.className = 'shop-item';
+                el.innerHTML = `
+                    <div class="shop-avatar">${createAvatar(brainrot, 40)}</div>
+                    <div class="shop-name">${brainrot.name}</div>
+                    <div class="shop-price"><span class="coin-small"></span>${brainrot.price}</div>
+                `;
+
+                el.addEventListener('click', () => {
+                    if (isSpinning) return;
+                    if (hasItem) {
+                        showToast('Этот предмет уже есть в инвентаре', false);
+                        return;
+                    }
+                    if (coins < brainrot.price) {
+                        showToast('Недостаточно монет', false);
+                        return;
+                    }
+                    coins -= brainrot.price;
+                    inventory.push({ id: brainrot.id, quantity: 1 });
+                    updateBalanceUI();
+                    renderInventory();
+                    renderShop();
+                    showToast(`Куплен: ${brainrot.name}`, true);
+                });
+
+                shopGrid.appendChild(el);
+            });
+        }
+
+        function updateSelectedItemUI() {
+            const item = ALL_BRAINROTS[selectedItemId];
+            if (!item) return;
+
+            selectedItemContainer.innerHTML = createAvatar(item, 100);
+            selectedItemName.textContent = item.name;
+            selectedItemPrice.textContent = item.price;
+
+            upgradeBtn.disabled = false;
+            updateTargetUI();
+            const target = ALL_BRAINROTS[selectedTargetId];
+            if (target) {
+                const chance = calculateChance(selectedItemId, selectedTargetId);
+                updateChanceRing(chance);
+            }
+        }
+
+        function updateTargetUI() {
+            const target = ALL_BRAINROTS[selectedTargetId];
+            if (!target) return;
+
+            targetItemContainer.innerHTML = createAvatar(target, 100);
+            targetItemName.textContent = target.name;
+            targetItemPrice.textContent = target.price;
+        }
+
+        function updateChanceRing(chance) {
+            chanceValueEl.textContent = chance + '%';
+            resetArrow();
+
+            const successDash = (chance / 100) * CIRCUMFERENCE;
+            const failDash = CIRCUMFERENCE - successDash;
+
+            ringSuccess.style.strokeDasharray = `${successDash} ${CIRCUMFERENCE}`;
+            ringSuccess.style.strokeDashoffset = 0;
+            ringSuccess.style.transform = 'rotate(-90deg)';
+            ringSuccess.style.transformOrigin = 'center';
+
+            ringFail.style.strokeDasharray = `0 ${successDash} ${failDash} 0`;
+            ringFail.style.strokeDashoffset = 0;
+            ringFail.style.transform = 'rotate(-90deg)';
+            ringFail.style.transformOrigin = 'center';
+        }
+
+        upgradeBtn.addEventListener('click', () => {
+            if (isSpinning) return;
+
+            const currentItem = ALL_BRAINROTS[selectedItemId];
+            const target = ALL_BRAINROTS[selectedTargetId];
+            if (!currentItem || !target) return;
+
+            if (target.price <= currentItem.price) {
+                showToast('Цель должна быть дороже выбранного предмета', false);
+                return;
+            }
+
+            const chance = calculateChance(selectedItemId, selectedTargetId);
+            isSpinning = true;
+            upgradeBtn.disabled = true;
+            upgradeBtn.textContent = '...';
+            resetArrow();
+
+            const random = Math.random() * 100;
+            const isSuccess = random < chance;
+
+            let targetAngle;
+            if (isSuccess) {
+                targetAngle = Math.random() * (chance / 100 * 360);
+            } else {
+                targetAngle = (chance / 100 * 360) + Math.random() * ((100 - chance) / 100 * 360);
+            }
+
+            const totalRotation = 360 * 5 + targetAngle;
+
+            arrowContainer.style.transition = 'transform 3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            arrowContainer.style.transform = `rotate(${totalRotation}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                upgradeBtn.disabled = false;
+                upgradeBtn.textContent = 'ПРОКАЧАТЬ';
+
+                if (isSuccess) {
+                    const index = inventory.findIndex(i => i.id === selectedItemId);
+                    if (index !== -1) inventory.splice(index, 1);
+                    
+                    const existingTarget = inventory.find(i => i.id === selectedTargetId);
+                    if (existingTarget) {
+                        existingTarget.quantity += 1;
+                    } else {
+                        inventory.push({ id: selectedTargetId, quantity: 1 });
+                    }
+                    
+                    selectedItemId = selectedTargetId;
+                    
+                    showToast(`УСПЕХ! Получен: ${target.name}`, true);
+                    updateBalanceUI();
+                    renderInventory();
+                    renderShop();
+                    updateSelectedItemUI();
+
+                    const availableTargets = Object.values(ALL_BRAINROTS).filter(b => 
+                        b.id !== selectedItemId && b.price > ALL_BRAINROTS[selectedItemId].price
+                    );
+                    if (availableTargets.length > 0) {
+                        selectedTargetId = availableTargets[0].id;
+                        updateTargetUI();
+                        updateChanceRing(calculateChance(selectedItemId, selectedTargetId));
+                        renderTargets();
+                    }
+                    setTimeout(resetArrow, 1000);
+                } else {
+                    showToast('Неудача. Предмет потерян.', false);
+                    const index = inventory.findIndex(i => i.id === selectedItemId);
+                    if (index !== -1) inventory.splice(index, 1);
+                    renderInventory();
+                    
+                    if (inventory.length > 0) {
+                        selectedItemId = inventory[0].id;
+                        updateSelectedItemUI();
+                    } else {
+                        upgradeBtn.disabled = true;
+                        upgradeBtn.textContent = 'НЕТ ПРЕДМЕТОВ';
+                    }
+                    setTimeout(resetArrow, 1000);
+                }
+            }, 3100);
+        });
+
+        function init() {
+            updateBalanceUI();
+            renderInventory();
+            renderShop();
+            renderTargets();
+            updateSelectedItemUI();
+            updateTargetUI();
+            updateChanceRing(calculateChance(selectedItemId, selectedTargetId));
+            resetArrow();
+        }
+
+        init();
+    </script>
+</body>
+</html>
