@@ -1,0 +1,22 @@
+{
+  "name": "brainrot-game",
+  "version": "1.0.0",
+  "description": "BrainRoll — Telegram Mini App (кейсы, апгрейдер, дайсы, catch game)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {},
+  "keywords": [
+    "telegram",
+    "mini-app",
+    "brainrot",
+    "game"
+  ],
+  "author": "",
+  "license": "MIT"
+}
